@@ -1,0 +1,170 @@
+.sales-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* KPI Cards */
+  .stat-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+  }
+  
+  .card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s;
+  }
+  
+  .card h3 {
+    color: #ccc;
+    margin-bottom: 10px;
+  }
+  
+  .card p {
+    font-size: 20px;
+    font-weight: bold;
+    color: #00d4ff;
+  }
+  
+  /* Charts */
+  .charts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+  }
+  
+  .chart-box {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 20px;
+    min-height: 250px;
+  }
+  
+  /* Sales Table */
+  .sales-table {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    overflow-x: auto;
+  }
+  
+  .sales-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .sales-table th,
+  .sales-table td {
+    padding: 12px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  /* ✅ Headers - always readable */
+  .sales-table th {
+    color: var(--accent-color);
+    font-weight: bold;
+  }
+  
+  /* ✅ Normal rows */
+  .sales-table td {
+    color: var(--text-color); /* not muted → readable */
+  }
+  
+  /* ✅ Status badges */
+  .status {
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+  }
+  
+  .status.completed {
+    color: var(--accent-color); /* ✅ theme aware */
+  }
+  
+  .status.pending {
+    color: #ff9800; /* Orange - visible on both themes */
+  }
+  
+  .status.failed {
+    color: #f44336; /* Red */
+  }
+  
+  
+  /* KPI Cards */
+  .stat-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+  }
+  
+  .card {
+    background: var(--card-bg);        /* ✅ uses theme */
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s, background 0.3s;
+    border: 1px solid var(--border-color);  /* ✅ uses theme */
+  }
+  
+  .card h3 {
+    color: var(--text-muted);   /* ✅ muted text */
+    margin-bottom: 10px;
+  }
+  
+  .card p {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--accent-color); /* ✅ accent color */
+  }
+  
+  /* Charts */
+  .chart-box {
+    background: var(--card-bg);  /* ✅ card background */
+    border-radius: 12px;
+    padding: 20px;
+    min-height: 300px;
+    border: 1px solid var(--border-color);
+  }
+  
+  /* Orders Table */
+  .orders-table {
+    background: var(--card-bg);  /* ✅ card background */
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+  }
+  
+  .orders-table h3 {
+    margin-bottom: 10px;
+    color: var(--accent-color); /* ✅ accent color */
+  }
+  
+  .orders-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .orders-table th,
+  .orders-table td {
+    padding: 12px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .orders-table th {
+    color: var(--accent-color); /* ✅ accent color */
+  }
+  
+  .orders-table td {
+    color: var(--text-color);   /* ✅ normal text */
+  }
+  

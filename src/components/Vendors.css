@@ -1,0 +1,105 @@
+.vendors-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* KPI Cards */
+  .stat-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+  }
+  
+  .card {
+    background: var(--card-bg);        /* ✅ theme aware */
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s, background 0.3s ease, color 0.3s ease;
+    border: 1px solid var(--border-color); /* ✅ theme aware */
+  }
+  
+  .card h3 {
+    color: var(--text-muted);  /* ✅ muted text */
+    margin-bottom: 10px;
+  }
+  
+  .card p {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--accent-color); /* ✅ accent color */
+  }
+  
+  /* Charts */
+  .charts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+  }
+  
+  .chart-box {
+    background: var(--card-bg);       /* ✅ theme aware */
+    border-radius: 12px;
+    padding: 20px;
+    min-height: 300px;
+    border: 1px solid var(--border-color); /* ✅ theme aware */
+  }
+  
+  /* Vendor Table */
+  .vendor-table {
+    background: var(--card-bg);       /* ✅ theme aware */
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+  }
+  
+  .vendor-table h3 {
+    margin-bottom: 10px;
+    color: var(--accent-color);       /* ✅ theme aware */
+  }
+  
+  .vendor-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .vendor-table th,
+  .vendor-table td {
+    padding: 12px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color); /* ✅ theme aware */
+  }
+  
+  .vendor-table th {
+    color: var(--accent-color); /* ✅ accent */
+  }
+  
+  .vendor-table td {
+    color: var(--text-color);   /* ✅ theme aware */
+  }
+  
+  /* Status Badges */
+  .status {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: bold;
+  }
+  
+  .status.excellent {
+    background: rgba(0, 212, 255, 0.15);
+    color: var(--accent-color); /* ✅ use accent for excellent */
+  }
+  
+  .status.average {
+    background: rgba(255, 193, 7, 0.15);
+    color: #ffc107;
+  }
+  
+  .status.poor {
+    background: rgba(255, 87, 34, 0.15);
+    color: #ff5722;
+  }
+  

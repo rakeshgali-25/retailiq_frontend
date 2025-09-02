@@ -1,0 +1,106 @@
+.login-container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  /* make particles canvas fill the background */
+  #tsparticles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0; /* behind */
+  }
+  
+  /* login box stays above */
+  .login-box {
+    position: relative;
+    z-index: 1;
+    width: 380px;
+    padding: 40px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+    text-align: center;
+    animation: fadeIn 1.2s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .brand {
+    font-size: 32px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  
+  .brand span {
+    color: #00d4ff;
+  }
+  
+  .subtitle {
+    font-size: 14px;
+    color: #ccc;
+    margin-bottom: 30px;
+  }
+  
+  /* Form styles */
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+  }
+  
+  .login-form label {
+    font-size: 14px;
+    color: #ddd;
+    margin-bottom: 5px;
+  }
+  
+  .login-form input {
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+    transition: 0.3s;
+  }
+  
+  .login-form input:focus {
+    border: 1px solid #00d4ff;
+    box-shadow: 0 0 8px #00d4ff;
+  }
+  
+  /* Button */
+  .login-form button {
+    padding: 12px;
+    background: linear-gradient(90deg, #00d4ff, #0077ff);
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.4s ease;
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+  }
+  
+  .login-form button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 212, 255, 0.6);
+  }
+  

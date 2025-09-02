@@ -1,0 +1,175 @@
+/* ===============================
+   Header
+   =============================== */
+   .app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 25px;
+    border-bottom: 1px solid var(--border-color); /* ✅ theme aware */
+    background: var(--card-bg);                   /* ✅ theme aware */
+    backdrop-filter: blur(8px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  }
+  
+  .app-header h1,
+  .page-title {
+    font-size: 22px;
+    font-weight: bold;
+    background: var(--accent-gradient); /* ✅ theme aware */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  /* Search box */
+  .search-box {
+    flex: 1;
+    max-width: 400px;
+    margin: 0 20px;
+  }
+  .search-box input {
+    width: 100%;
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    outline: none;
+    background: var(--card-bg);       /* ✅ theme aware */
+    color: var(--text-color);
+    font-size: 14px;
+    transition: 0.3s;
+  }
+  .search-box input::placeholder {
+    color: var(--text-muted);
+  }
+  .search-box input:focus {
+    border-color: var(--accent-color);
+  }
+  
+  /* Right side */
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--accent-gradient); /* ✅ theme aware */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .logout-btn {
+    padding: 6px 14px;
+    border: 1px solid var(--accent-color);
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--accent-color);
+    background: transparent;
+    transition: 0.3s;
+  }
+  .logout-btn:hover {
+    background: var(--accent-color);
+    color: var(--bg-color); /* ✅ flips correctly in light/dark */
+  }
+  
+  /* ===============================
+     Layout Wrapper
+     =============================== */
+  .app-layout {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    background: var(--bg-color); /* ✅ theme aware */
+    color: var(--text-color);
+    font-family: "Segoe UI", sans-serif;
+  }
+  
+  /* Main content */
+  .app-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 220px);
+    min-width: 0;
+  }
+  .app-body {
+    padding: 20px;
+    flex: 1;
+    overflow-y: auto;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* ===============================
+     Sidebar
+     =============================== */
+  .app-sidebar {
+    width: 220px;
+    background: var(--card-bg); /* ✅ theme aware */
+    backdrop-filter: blur(10px);
+    padding: 20px 10px;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    transition: width 0.3s ease;
+    overflow: hidden;
+  }
+  
+  .app-sidebar.collapsed {
+    width: 60px; /* slim mode */
+  }
+  
+  /* Logo */
+  .logo {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    white-space: nowrap;
+    color: var(--text-color);
+  }
+  .logo span {
+    color: var(--accent-color);
+  }
+  
+  /* Sidebar Links */
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    margin: 6px 0;
+    border-radius: 8px;
+    color: var(--text-muted); /* ✅ theme aware */
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 15px;
+    white-space: nowrap;
+  }
+  .app-sidebar.collapsed .sidebar-link {
+    justify-content: center;
+    gap: 0;
+  }
+  .sidebar-link .icon {
+    font-size: 18px;
+  }
+  .sidebar-link:hover {
+    background: var(--border-color); /* ✅ theme aware hover */
+    color: var(--text-color);
+  }
+  
+  /* Active */
+  .sidebar-link.active {
+    background: rgba(0, 212, 255, 0.12);
+    border-left: 3px solid var(--accent-color);
+    color: var(--accent-color);
+    font-weight: bold;
+  }
+  

@@ -1,0 +1,153 @@
+.inventory-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Alert banner */
+  .alert-banner {
+    background: rgba(255, 152, 0, 0.15);
+    border-left: 4px solid #ff9800;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    color: #ff9800;
+  }
+  
+  /* KPI Cards */
+  .stat-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+  }
+  
+  .card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s;
+  }
+  
+  .card h3 {
+    color: #ccc;
+    margin-bottom: 10px;
+  }
+  
+  .card p {
+    font-size: 20px;
+    font-weight: bold;
+    color: #00d4ff;
+  }
+  
+  /* Charts */
+  .charts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+  }
+  
+  .chart-box {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 20px;
+    min-height: 300px;
+  }
+  
+  /* Inventory Table */
+/* Inventory Table */
+.inventory-table {
+    background: var(--card-bg);          /* ✅ theme aware */
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+  }
+  
+  .inventory-table h3 {
+    margin-bottom: 10px;
+    color: var(--text-color);            /* ✅ theme aware */
+  }
+  
+  .inventory-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .inventory-table th,
+  .inventory-table td {
+    padding: 12px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  /* ✅ Headers - readable & distinct */
+  .inventory-table th {
+    color: var(--accent-color);          /* accent blue in light, cyan in dark */
+    font-weight: bold;
+  }
+  
+  /* ✅ Row text - always visible */
+  .inventory-table td {
+    color: var(--text-color);            /* main readable color */
+  }
+  
+  /* Status Badges */
+  .status {
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+  }
+  
+  .status.healthy {
+    background: rgba(0, 212, 255, 0.15);
+    color: var(--accent-color);          /* ✅ matches theme */
+  }
+  
+  .status.low {
+    background: rgba(255, 193, 7, 0.15);
+    color: #ff9800;
+  }
+  
+  .status.critical {
+    background: rgba(255, 87, 34, 0.15);
+    color: #f44336;
+  }
+  
+  
+  /* Status badges */
+  .status {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: bold;
+  }
+  
+  .status.low {
+    background: rgba(255, 152, 0, 0.15);
+    color: #ff9800;
+  }
+  
+  .status.healthy {
+    background: rgba(0, 212, 255, 0.15);
+    color: #00d4ff;
+  }
+  
+  /* Reorder button */
+  .reorder-btn {
+    background: linear-gradient(90deg, #ff9800, #ff5722);
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    color: white;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.3s;
+  }
+  
+  .reorder-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+  }
+  

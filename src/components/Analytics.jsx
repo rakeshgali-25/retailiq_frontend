@@ -1,45 +1,68 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Analytics.css";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
+import API from "../api";
+import Loader from "../components/Loader";
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer,
-  BarChart, Bar, PieChart, Pie, Cell, Legend
+  PieChart, Pie, Cell, BarChart, Bar, Legend
 } from "recharts";
-
-// Sales trend (Jan–May)
-const salesTrend = [
-  { month: "Jan", total: 445 },
-  { month: "Feb", total: 420 },
-  { month: "Mar", total: 492 },
-  { month: "Apr", total: 540 },
-  { month: "May", total: 577 },
-];
-
-// Sales by product (May)
-const salesByProduct = [
-  { name: "Maggi", value: 240 },
-  { name: "KitKat", value: 125 },
-  { name: "Nescafé", value: 88 },
-  { name: "Milkmaid", value: 52 },
-  { name: "Everyday", value: 72 },
-];
-
-// Vendor delays (mock for demo)
-const vendorDelays = [
-  { product: "Maggi", sales: 240, delay: 1 },
-  { product: "KitKat", sales: 125, delay: 3 },
-  { product: "Nescafé", sales: 88, delay: 1 },
-  { product: "Milkmaid", sales: 52, delay: 2 },
-  { product: "Everyday", sales: 72, delay: 1 },
-];
 
 const COLORS = ["#00d4ff", "#0077ff", "#0d7377", "#2c5364", "#ff9800"];
 
 function Analytics() {
-  const top2Contribution = ((240 + 125) / 577 * 100).toFixed(1);
-  const onTimeFulfillment = ((23 / 25) * 100).toFixed(1); // Example: 23/25 orders on-time
-  const avgOrderValue = (577 * 100) / 25; // crude calc
-  const growthVsApr = (((577 - 540) / 540) * 100).toFixed(1);
+  const [summary, setSummary] = useState({});
+  const [salesTrend, setSalesTrend] = useState([]);
+  const [productContribution, setProductContribution] = useState([]);
+  const [vendorDelays, setVendorDelays] = useState([]);
+  const [insights, setInsights] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    Promise.all([
+      API.get("/analytics/summary/"),
+      API.get("/analytics/sales-trend/"),
+      API.get("/analytics/product-contribution/"),
+      API.get("/analytics/vendor-delays/"),
+      API.get("/analytics/insights/"),
+    ])
+      .then(([summaryRes, trendRes, productRes, delaysRes, insightsRes]) => {
+        setSummary(summaryRes.data);
+
+        // Format sales trend
+        const formattedTrend = trendRes.data.map(d => {
+          const date = new Date(d.month);
+          return {
+            month: date.toLocaleString("default", { month: "short" }),
+            sales: d.total_sales,
+          };
+        });
+        setSalesTrend(formattedTrend);
+
+        // Product contribution
+        const formattedProducts = productRes.data.map(d => ({
+          name: d.product__name,
+          value: d.total_sales,
+        }));
+        setProductContribution(formattedProducts);
+
+        // Vendor delays
+        const formattedDelays = delaysRes.data.map(d => ({
+          product: d.product__name,
+          // sales: d.total_sales,
+          delays: d.avg_delay,
+        }));
+        console.log(formattedDelays,"formatted delays")
+        setVendorDelays(formattedDelays);
+
+        setInsights(insightsRes.data.insights);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <Loader />;
 
   return (
     <div className="analytics-container">
@@ -47,19 +70,19 @@ function Analytics() {
       <div className="stat-cards">
         <motion.div className="card" whileHover={{ scale: 1.05 }}>
           <h3>Top 2 Products Contribution</h3>
-          <p>{top2Contribution}%</p>
+          <p>{summary.top2_contribution_percent}%</p>
         </motion.div>
         <motion.div className="card" whileHover={{ scale: 1.05 }}>
           <h3>On-Time Fulfillment</h3>
-          <p>{onTimeFulfillment}%</p>
+          <p>{summary.on_time_fulfillment_percent}%</p>
         </motion.div>
         <motion.div className="card" whileHover={{ scale: 1.05 }}>
           <h3>Avg. Order Value</h3>
-          <p>₹ {avgOrderValue.toFixed(2)} Lakh</p>
+          <p>₹ {summary.avg_order_value?.toLocaleString()}</p>
         </motion.div>
         <motion.div className="card" whileHover={{ scale: 1.05 }}>
           <h3>Growth vs Apr</h3>
-          <p>+{growthVsApr}%</p>
+          <p>{summary.growth_vs_prev}%</p>
         </motion.div>
       </div>
 
@@ -73,7 +96,7 @@ function Analytics() {
               <XAxis dataKey="month" stroke="#ccc" />
               <YAxis stroke="#ccc" />
               <Tooltip />
-              <Line type="monotone" dataKey="total" stroke="#00d4ff" strokeWidth={2} />
+              <Line type="monotone" dataKey="sales" stroke="#00d4ff" strokeWidth={2} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -83,15 +106,15 @@ function Analytics() {
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
               <Pie
-                data={salesByProduct}
+                data={productContribution}
                 dataKey="value"
                 nameKey="name"
                 cx="50%"
                 cy="50%"
-                outerRadius={90}
+                outerRadius={100}
                 label
               >
-                {salesByProduct.map((entry, index) => (
+                {productContribution.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
@@ -110,9 +133,9 @@ function Analytics() {
               <YAxis stroke="#ccc" />
               <Tooltip />
               <Legend />
-              <Bar dataKey="sales" fill="#00d4ff" name="Sales (₹ Cr)" />
-              <Bar dataKey="delay" fill="#ff9800" name="Delays (Orders)" />
+              <Bar dataKey="delays" fill="#ff9800" name="Avg Delay (mins)" />
             </BarChart>
+
           </ResponsiveContainer>
         </div>
       </div>
@@ -121,9 +144,9 @@ function Analytics() {
       <div className="insights-box">
         <h3>Insights</h3>
         <ul>
-          <li>⚠️ Maggi + KitKat contribute {top2Contribution}% of sales → high dependency risk.</li>
-          <li>⚠️ Bharat Cocoa Traders caused multiple KitKat delays → affecting sales.</li>
-          <li>✅ On-Time Fulfillment is strong at {onTimeFulfillment}% overall.</li>
+          {insights.map((insight, i) => (
+            <li key={i}>{insight}</li>
+          ))}
         </ul>
       </div>
     </div>

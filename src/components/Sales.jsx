@@ -1,42 +1,56 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import API from "../api"; // axios wrapper
 import "./Sales.css";
+import Loader from "../components/Loader";
 import { motion } from "framer-motion";
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer,
-  BarChart, Bar, PieChart, Pie, Cell, Legend
+  BarChart, Bar, Cell
 } from "recharts";
-
-// Nestlé Sales Data
-const salesTrend = [
-  { month: "Jan", Maggi: 180, KitKat: 95, Nescafe: 70, Milkmaid: 40, Everyday: 60, total: 445 },
-  { month: "Feb", Maggi: 170, KitKat: 85, Nescafe: 72, Milkmaid: 38, Everyday: 55, total: 420 },
-  { month: "Mar", Maggi: 200, KitKat: 110, Nescafe: 75, Milkmaid: 45, Everyday: 62, total: 492 },
-  { month: "Apr", Maggi: 220, KitKat: 120, Nescafe: 82, Milkmaid: 50, Everyday: 68, total: 540 },
-  { month: "May", Maggi: 240, KitKat: 125, Nescafe: 88, Milkmaid: 52, Everyday: 72, total: 577 },
-];
-
-const salesByProduct = [
-  { name: "Maggi", value: 240 },
-  { name: "KitKat", value: 125 },
-  { name: "Nescafé", value: 88 },
-  { name: "Milkmaid", value: 52 },
-  { name: "Everyday", value: 72 },
-];
-
-const recentOrders = [
-  { id: "ORD-201", product: "Maggi", vendor: "Shakti Packaging", qty: "1,20,000 packs", value: "₹1.8 Cr", date: "2025-05-25", status: "Completed" },
-  { id: "ORD-202", product: "KitKat", vendor: "Bharat Cocoa Traders", qty: "80,000 bars", value: "₹1.6 Cr", date: "2025-05-26", status: "Pending" },
-  { id: "ORD-203", product: "Nescafé", vendor: "Global Coffee Imports", qty: "40,000 jars", value: "₹1.28 Cr", date: "2025-05-27", status: "Completed" },
-  { id: "ORD-204", product: "Milkmaid", vendor: "Sunrise Dairy Farms", qty: "50,000 tins", value: "₹65 Lakh", date: "2025-05-28", status: "Completed" },
-  { id: "ORD-205", product: "Everyday", vendor: "Sunrise Dairy Farms", qty: "30,000 packs", value: "₹1.65 Cr", date: "2025-05-29", status: "Pending" },
-];
 
 const COLORS = ["#00d4ff", "#0077ff", "#0d7377", "#2c5364", "#ff9800"];
 
 function Sales() {
+  const [summary, setSummary] = useState({});
+  const [trend, setTrend] = useState([]);
+  const [byProduct, setByProduct] = useState([]);
+  const [recentOrders, setRecentOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+  setLoading(true);
 
-    
+  Promise.all([
+    API.get("/sales/summary/"),
+    API.get("/sales/trend/"),
+    API.get("/sales/by-product/"),
+    API.get("/sales/recent-orders/"),
+  ])
+    .then(([summaryRes, trendRes, byProductRes, recentRes]) => {
+      setSummary(summaryRes.data);
+
+      // Process Trend
+      const grouped = {};
+      trendRes.data.forEach(row => {
+        const month = new Date(row.month).toLocaleString("default", { month: "short" });
+        if (!grouped[month]) grouped[month] = { month };
+        grouped[month][row.product__name] = row.total_sales;
+      });
+      setTrend(Object.values(grouped));
+
+      // By Product
+      const formatted = byProductRes.data.map(d => ({
+        name: d.product__name,
+        value: d.total_sales,
+      }));
+      setByProduct(formatted);
+
+      setRecentOrders(recentRes.data);
+    })
+    .finally(() => setLoading(false));
+}, []);
+
+    if (loading) return <Loader />;
 
   return (
     <div className="sales-container">
@@ -44,19 +58,23 @@ function Sales() {
       <div className="stat-cards">
         <motion.div className="card" whileHover={{ scale: 1.05 }}>
           <h3>Total Sales (May)</h3>
-          <p>₹ 577 Cr</p>
+          <p>₹ {summary.total_sales?.toLocaleString()}</p>
         </motion.div>
         <motion.div className="card" whileHover={{ scale: 1.05 }}>
           <h3>Top Product</h3>
-          <p>Maggi (₹ 240 Cr)</p>
+          <p>
+            {summary.top_product?.product__name} (₹ {summary.top_product?.total_sales})
+          </p>
         </motion.div>
+
         <motion.div className="card" whileHover={{ scale: 1.05 }}>
           <h3>Growth vs Apr</h3>
-          <p>+6.8%</p>
+          <p>{summary.growth_vs_prev}%</p>
         </motion.div>
+
         <motion.div className="card" whileHover={{ scale: 1.05 }}>
           <h3>Pending Orders</h3>
-          <p>2</p>
+          <p>{summary.pending_orders}</p>
         </motion.div>
       </div>
 
@@ -65,7 +83,7 @@ function Sales() {
         <div className="chart-box">
           <h3>Sales Trend (₹ Cr)</h3>
           <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={salesTrend}>
+            <LineChart data={trend}>
               <CartesianGrid strokeDasharray="3 3" stroke="#444" />
               <XAxis dataKey="month" stroke="#ccc" />
               <YAxis stroke="#ccc" />
@@ -82,17 +100,18 @@ function Sales() {
         <div className="chart-box">
           <h3>Sales by Product (May)</h3>
           <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={salesByProduct}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-              <XAxis dataKey="name" stroke="#ccc" />
-              <YAxis stroke="#ccc" />
-              <Tooltip />
-              <Bar dataKey="value">
-                {salesByProduct.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Bar>
-            </BarChart>
+            <BarChart data={byProduct}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+            <XAxis dataKey="name" stroke="#ccc" />
+            <YAxis stroke="#ccc" />
+            <Tooltip />
+            <Bar dataKey="value">
+              {byProduct.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Bar>
+          </BarChart>
+
           </ResponsiveContainer>
         </div>
       </div>
@@ -114,13 +133,13 @@ function Sales() {
           </thead>
           <tbody>
             {recentOrders.map((order) => (
-              <tr key={order.id}>
-                <td>{order.id}</td>
-                <td>{order.product}</td>
-                <td>{order.vendor}</td>
-                <td>{order.qty}</td>
-                <td>{order.value}</td>
-                <td>{order.date}</td>
+              <tr key={order.order_id}>
+                <td>{order.order_id}</td>
+                <td>{order.product_name}</td>
+                <td>{order.vendor_name}</td>
+                <td>{order.quantity}</td>
+                <td>₹{parseFloat(order.order_value).toLocaleString()}</td>
+                <td>{order.order_date}</td>
                 <td style={{ color: order.status === "Pending" ? "#ff9800" : "#00d4ff" }}>
                   {order.status}
                 </td>

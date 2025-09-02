@@ -1,30 +1,39 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Inventory.css";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
+import API from "../api"; // axios wrapper
+import Loader from "../components/Loader"; // your bouncing dots loader
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell
 } from "recharts";
 
-// Inventory Data
-const inventoryData = [
-  { product: "Maggi", stock: 500000, reorder: 200000, price: 150 },
-  { product: "KitKat", stock: 350000, reorder: 150000, price: 20 },
-  { product: "Nescafé", stock: 120000, reorder: 50000, price: 320 },
-  { product: "Milkmaid", stock: 200000, reorder: 80000, price: 130 },
-  { product: "Everyday", stock: 100000, reorder: 40000, price: 550 },
-];
-
 const COLORS = ["#00d4ff", "#0077ff", "#0d7377", "#2c5364", "#ff9800"];
 
-// KPI calculations
-const totalStock = inventoryData.reduce((sum, i) => sum + i.stock, 0);
-const lowStockItems = inventoryData.filter(i => i.stock <= i.reorder).length;
-const inventoryValue = inventoryData.reduce((sum, i) => sum + (i.stock * i.price), 0);
-const stockCoverageDays = Math.round(totalStock / 20000); // assume daily demand = 20k units
-const lowStockPercent = ((lowStockItems / inventoryData.length) * 100).toFixed(1);
-
 function Inventory() {
+  const [inventoryData, setInventoryData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    API.get("/inventory/details/") // ⬅️ your backend endpoint
+      .then((res) => {
+        setInventoryData(res.data);
+      })
+      .catch((err) => console.error("Inventory API error:", err))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <Loader />;
+
+  // KPI calculations
+  const totalStock = inventoryData.reduce((sum, i) => sum + i.stock_level, 0);
+  const lowStockItems = inventoryData.filter(i => i.stock_level <= i.reorder_level).length;
+  const inventoryValue = inventoryData.reduce((sum, i) => sum + (i.stock_level * i.unit_price), 0);
+  const stockCoverageDays = Math.round(totalStock / 20000); // assume daily demand = 20k units
+  const lowStockPercent = ((lowStockItems / (inventoryData.length || 1)) * 100).toFixed(1);
+
   return (
     <div className="inventory-container">
       {/* Alerts */}
@@ -63,37 +72,39 @@ function Inventory() {
           <h3>Stock vs Reorder Levels</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={inventoryData}>
-              <XAxis dataKey="product" stroke="#ccc" />
+              <XAxis dataKey="product_name" stroke="#ccc" />
               <YAxis stroke="#ccc" />
               <Tooltip />
               <Legend />
-              <Bar dataKey="stock" fill="#00d4ff" />
-              <Bar dataKey="reorder" fill="#ff9800" />
+              <Bar dataKey="stock_level" name="Stock" fill="#00d4ff" />
+              <Bar dataKey="reorder_level" name="Reorder" fill="#ff9800" />
             </BarChart>
           </ResponsiveContainer>
+
         </div>
 
         <div className="chart-box">
           <h3>Inventory Distribution</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={inventoryData}
-                dataKey="stock"
-                nameKey="product"
-                cx="50%"
-                cy="50%"
-                outerRadius={100}
-                label
-              >
-                {inventoryData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
+  <PieChart>
+    <Pie
+      data={inventoryData}
+      dataKey="stock_level"
+      nameKey="product_name"
+      cx="50%"
+      cy="50%"
+      outerRadius={100}
+      label
+    >
+      {inventoryData.map((entry, index) => (
+        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+      ))}
+    </Pie>
+    <Tooltip />
+    <Legend />
+  </PieChart>
+</ResponsiveContainer>
+
         </div>
       </div>
 
@@ -111,29 +122,30 @@ function Inventory() {
             </tr>
           </thead>
           <tbody>
-            {inventoryData.map((item) => {
-              const isLow = item.stock <= item.reorder;
-              return (
-                <tr key={item.product}>
-                  <td>{item.product}</td>
-                  <td>{item.stock.toLocaleString()}</td>
-                  <td>{item.reorder.toLocaleString()}</td>
-                  <td>
-                    <span className={`status ${isLow ? "low" : "healthy"}`}>
-                      {isLow ? "Low Stock" : "Healthy"}
-                    </span>
-                  </td>
-                  <td>
-                    {isLow ? (
-                      <button className="reorder-btn">Reorder</button>
-                    ) : (
-                      "-"
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
+  {inventoryData.map((item) => {
+    const isLow = item.stock_level <= item.reorder_level;
+    return (
+      <tr key={item.id}>
+        <td>{item.product_name}</td>
+        <td>{item.stock_level.toLocaleString()}</td>
+        <td>{item.reorder_level.toLocaleString()}</td>
+        <td>
+          <span className={`status ${isLow ? "low" : "healthy"}`}>
+            {isLow ? "Low Stock" : "Healthy"}
+          </span>
+        </td>
+        <td>
+          {isLow ? (
+            <button className="reorder-btn">Reorder</button>
+          ) : (
+            "-"
+          )}
+        </td>
+      </tr>
+    );
+  })}
+</tbody>
+
         </table>
       </div>
     </div>

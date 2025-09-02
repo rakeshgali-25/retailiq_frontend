@@ -1,35 +1,61 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
+import API from "../api"; // axios wrapper
+import Loader from "../components/Loader"; // ⬅️ your custom loader
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer,
   BarChart, Bar, PieChart, Pie, Cell, Legend
 } from "recharts";
 
 function Dashboard() {
-  // Sample data
-  const salesData = [
-    { month: "Jan", sales: 400 },
-    { month: "Feb", sales: 300 },
-    { month: "Mar", sales: 600 },
-    { month: "Apr", sales: 800 },
-    { month: "May", sales: 700 },
-  ];
-
-  const inventoryData = [
-    { item: "Raw Materials", qty: 120 },
-    { item: "Finished Goods", qty: 80 },
-    { item: "In Transit", qty: 50 },
-  ];
-
-  const vendorData = [
-    { name: "Vendor A", value: 40 },
-    { name: "Vendor B", value: 30 },
-    { name: "Vendor C", value: 20 },
-    { name: "Others", value: 10 },
-  ];
+  const [summary, setSummary] = useState({ total_sales: 0, active_vendors: 0, pending_orders: 0 });
+  const [salesData, setSalesData] = useState([]);
+  const [inventoryData, setInventoryData] = useState([]);
+  const [vendorData, setVendorData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const COLORS = ["#00d4ff", "#0077ff", "#0d7377", "#2c5364"];
+
+  useEffect(() => {
+    setLoading(true);
+
+    Promise.all([
+      API.get("/dashboard/summary/"),
+      API.get("/dashboard/sales-over-time/"),
+      API.get("/dashboard/inventory-levels/"),
+      API.get("/dashboard/vendor-contribution/"),
+    ])
+      .then(([summaryRes, salesRes, inventoryRes, vendorRes]) => {
+        setSummary(summaryRes.data);
+
+        // Sales
+        const formattedSales = salesRes.data.map((d) => {
+          const date = new Date(d.month);
+          return { month: date.toLocaleString("default", { month: "short" }), sales: d.total_sales };
+        });
+        setSalesData(formattedSales);
+
+        // Inventory
+        const formattedInventory = inventoryRes.data.map((d) => ({
+          item: d.product__category,
+          qty: d.total_stock,
+        }));
+        setInventoryData(formattedInventory);
+
+        // Vendors
+        const formattedVendors = vendorRes.data.map((d) => ({
+          name: d.vendor__name,
+          value: d.total_sales,
+        }));
+        setVendorData(formattedVendors);
+      })
+      .catch((err) => console.error("Dashboard API error:", err))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <Loader />; // ⬅️ show loader while fetching
 
   return (
     <div className="dashboard-body">
@@ -37,15 +63,15 @@ function Dashboard() {
       <div className="stat-cards">
         <motion.div className="card" whileHover={{ scale: 1.05 }}>
           <h3>Total Sales</h3>
-          <p>₹ 1.2 Cr</p>
+          <p>₹ {summary.total_sales}</p>
         </motion.div>
         <motion.div className="card" whileHover={{ scale: 1.05 }}>
           <h3>Active Vendors</h3>
-          <p>56</p>
+          <p>{summary.active_vendors}</p>
         </motion.div>
         <motion.div className="card" whileHover={{ scale: 1.05 }}>
           <h3>Pending Orders</h3>
-          <p>32</p>
+          <p>{summary.pending_orders}</p>
         </motion.div>
       </div>
 

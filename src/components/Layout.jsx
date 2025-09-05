@@ -1,15 +1,21 @@
 import React, { useState } from "react";
 import { Outlet, useNavigate, NavLink } from "react-router-dom";
 import { FaHome, FaChartLine, FaBoxes, FaTruck, FaChartBar } from "react-icons/fa";
-import Header  from "./Header";
+import Header from "./Header";
 import "./Layout.css";
 
 function Layout() {
   const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(true); // collapsed by default
+  const [collapsed, setCollapsed] = useState(true);
 
   const handleLogout = () => {
-    navigate("/login");
+    // clear client auth
+    localStorage.removeItem("refresh");
+    localStorage.removeItem("access");
+    // optionally clear context / redux here
+
+    // navigate to login and replace history
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -21,7 +27,6 @@ function Layout() {
         onMouseLeave={() => setCollapsed(true)}
       >
         <h2 className="logo">{!collapsed && <>Retail<span>IQ</span></>}</h2>
-
         <nav>
           <NavLink to="/dashboard" className="sidebar-link">
             <FaHome className="icon" /> {!collapsed && "Dashboard"}
@@ -44,7 +49,6 @@ function Layout() {
       {/* Main content */}
       <div className="app-main">
         <Header onLogout={handleLogout} />
-
         <div className="app-body">
           <Outlet />
         </div>

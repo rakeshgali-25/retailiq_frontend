@@ -104,3 +104,24 @@
     box-shadow: 0 6px 20px rgba(0, 212, 255, 0.6);
   }
   
+
+  /* Make sure particles are behind UI and don't intercept pointer events */
+.particles-bg {
+  position: fixed;
+  inset: 0;               /* top:0; right:0; bottom:0; left:0; */
+  z-index: 0;             /* behind your UI, adjust if needed */
+  pointer-events: none;   /* lets mouse/keyboard interactions pass through */
+  overflow: hidden;
+}
+
+/* Ensure your login UI is above the particles */
+.login-container {
+  position: relative;
+  z-index: 2; /* must be greater than .particles-bg z-index (0) */
+}
+
+/* Ensure the login card itself is on top */
+.login-box {
+  position: relative;
+  z-index: 3;
+}

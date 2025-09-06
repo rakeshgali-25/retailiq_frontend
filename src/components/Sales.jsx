@@ -61,12 +61,11 @@ function Sales() {
 
         // By Product
         const formatted = byProductRes.data.map((d) => ({
-          name: d.product__name,
+          name: d.product,
           value: d.total_sales,
         }));
         setByProduct(formatted);
-
-        setRecentOrders(ordersRes.data);
+        setRecentOrders(ordersRes.data.results);
         setProducts(productsRes.data);
         setVendors(vendorsRes.data);
       })

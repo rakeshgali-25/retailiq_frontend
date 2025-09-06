@@ -13,6 +13,7 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
+  
   const navigate = useNavigate();
 
   const onSubmit = async (e) => {
@@ -24,6 +25,8 @@ function LoginPage() {
       const { access, refresh } = await login(username, password); // calls /api/auth/token/
       localStorage.setItem("access", access);
       localStorage.setItem("refresh", refresh);
+      localStorage.setItem("username", username);
+
       API.defaults.headers.Authorization = `Bearer ${access}`;
       navigate("/dashboard"); // or wherever your app’s main page is
     } catch (e) {

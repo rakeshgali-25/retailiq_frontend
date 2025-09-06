@@ -24,11 +24,12 @@
     gap: 15px;
   }
   
-  .user-name {
-    color: #ddd;
-    font-size: 14px;
-  }
-  
+.user-name {
+  color: var(--text-color);   /* ✅ will auto-change with theme */
+  font-weight: 500;
+  margin: 0 8px;
+  transition: color 0.3s ease;
+}
   .avatar {
     width: 34px;
     height: 34px;

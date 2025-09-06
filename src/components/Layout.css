@@ -173,3 +173,37 @@
     font-weight: bold;
   }
   
+  /* hide sidebar and header in zoom mode */
+.app-layout.zoomed .app-sidebar,
+.app-layout.zoomed .app-main > .app-header {
+  display: none !important;
+}
+
+/* make main take full width */
+.app-layout.zoomed .app-main {
+  width: 100%;
+  margin-left: 0;
+}
+
+/* ensure body area uses more space when zoomed */
+.app-layout.zoomed .app-body {
+  padding: 12px; /* reduce padding so charts use more space */
+}
+
+/* floating exit-zoom button in top-right corner */
+.zoom-exit {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 1100;
+}
+.zoom-exit-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+  color: var(--text-color);
+}
+.zoom-exit-btn:hover { opacity: 0.95; }
